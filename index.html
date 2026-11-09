@@ -1,0 +1,757 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>La mia scuola di yoga</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: светлый «план здания» – одна колонка уроков, в первом блоке кликабельная схема школы */
+:root{
+  --bg:#F6F0E6; --surface:#FFFCF6; --ink:#3B3128; --muted:#857666; --line:#E5D9C8;
+  --accent:#5E7A4E; --accent-soft:#E7EDDC; --saffron:#A97A3E; --saffron-soft:#F4E7D2;
+  --ok:#4F7D3F; --bad:#B05A45;
+  --display:"Cormorant Garamond", "Times New Roman", serif;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1D1915; --surface:#27221D; --ink:#F0E8DC; --muted:#B3A593; --line:#3E352C;
+  --accent:#AFC79C; --accent-soft:#2E3626; --saffron:#DDB37A; --saffron-soft:#3A2F20;
+  --ok:#9DD08A; --bad:#EE9A85; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1D1915; --surface:#27221D; --ink:#F0E8DC; --muted:#B3A593; --line:#3E352C;
+  --accent:#AFC79C; --accent-soft:#2E3626; --saffron:#DDB37A; --saffron-soft:#3A2F20;
+  --ok:#9DD08A; --bad:#EE9A85; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:960px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.6rem,7vw,4.2rem)}
+h2{font-size:clamp(1.9rem,4.5vw,2.5rem)}
+h3{font-size:1.45rem}
+p{margin:0}
+.it{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.18em;color:var(--accent)}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--saffron)}
+.muted{color:var(--muted)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
+
+header.hero{padding-block:24px 28px;display:grid;gap:18px}
+.hero-img{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/8;max-width:100%;background:var(--line)}
+.hero-img img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,30,20,0) 35%,rgba(40,30,20,.62) 100%)}
+.hero-cap{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:clamp(16px,4vw,36px);color:#FFF8EE;display:grid;gap:6px}
+.hero-cap h1{color:#FFF8EE;font-style:italic;font-weight:500;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+.hero-cap .eyebrow{color:#F3D9AE}
+@media (max-width:560px){.hero-img{aspect-ratio:4/5}.hero-img img{object-position:35% 50%}}
+
+/* фото-экскурсия */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.tour{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.photo{position:relative;border-radius:14px;overflow:hidden;max-width:100%;background:var(--line);line-height:0}
+.photo img{width:100%;display:block}
+.photo.tall{max-width:440px;justify-self:center}
+.dot{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;border:2px solid #FFF8EE;
+  background:rgba(94,122,78,.85);color:#FFF8EE;font-size:.7rem;font-weight:700;line-height:22px;padding:0;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.dot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(255,248,238,.6);animation:pulse 2.4s infinite}
+.dot.on{background:#A97A3E}
+.dot.found{background:#4F7D3F}
+.dot.miss{background:#B05A45}
+.photo.quiz .dot{background:rgba(255,248,238,.35)}
+.photo.quiz .dot.found{background:#4F7D3F}.photo.quiz .dot.miss{background:#B05A45}
+.lbl{position:absolute;transform:translate(-50%,calc(-100% - 18px));background:#FFF8EE;color:#3B3128;font-family:var(--display);font-style:italic;font-weight:600;
+  font-size:1.05rem;line-height:1.2;padding:4px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+@keyframes pulse{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.side{display:grid;gap:12px;align-content:start;min-width:0}
+.wordlist{display:grid;gap:4px;max-height:420px;overflow:auto;padding-right:4px}
+.wl{display:flex;justify-content:space-between;gap:10px;background:transparent;border:none;border-bottom:1px dashed var(--line);padding:6px 2px;text-align:left;color:var(--ink)}
+.wl:hover,.wl.on{color:var(--accent)}
+.wl .it{font-size:1.1rem}
+.wl span:last-child{color:var(--muted);font-size:.82rem;text-align:right}
+.quizbox{background:var(--saffron-soft);border-radius:10px;padding:14px;display:grid;gap:6px}
+.quizbox .q{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.5rem;color:var(--ink)}
+@media (max-width:760px){.tour{grid-template-columns:1fr}.wordlist{max-height:none}}
+header.hero p.lead{max-width:62ch;font-size:1.05rem}
+nav.steps{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.steps a{flex:none;text-decoration:none;color:var(--muted);font-weight:600;font-size:.85rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line)}
+nav.steps a:hover{color:var(--accent);border-color:var(--accent)}
+nav.steps a b{color:var(--saffron);margin-right:4px}
+
+section.block{padding-block:48px 8px;display:grid;gap:18px;scroll-margin-top:60px}
+.intro{max-width:64ch}
+
+/* план школы */
+.plan{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(78px,auto));gap:6px;
+  background:var(--line);border:6px solid var(--ink);border-radius:4px;padding:6px}
+.room{background:var(--surface);border:none;color:var(--ink);text-align:left;padding:10px;display:flex;flex-direction:column;justify-content:space-between;gap:4px;min-width:0;transition:background .15s}
+.room:hover{background:var(--accent-soft)}
+.room[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+.room[aria-pressed="true"] .rlab{color:var(--surface)}
+.room .rname{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.15rem;line-height:1.1}
+.room .rlab{font-size:.75rem;color:var(--muted)}
+.room.terr{background:repeating-linear-gradient(45deg,var(--surface) 0 8px,var(--accent-soft) 8px 10px)}
+.room.terr[aria-pressed="true"]{background:var(--accent)}
+.r-ingresso{grid-column:1/3;grid-row:4}
+.r-grande{grid-column:1/3;grid-row:1/3}
+.r-piccola{grid-column:3;grid-row:1}
+.r-video{grid-column:4;grid-row:1}
+.r-spogliatoio{grid-column:3;grid-row:2}
+.r-docce{grid-column:4;grid-row:2}
+.r-negozio{grid-column:1;grid-row:3}
+.r-ufficio{grid-column:2;grid-row:3}
+.r-terrazza{grid-column:3/5;grid-row:3/5}
+.plan-legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px}
+.detail .words{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.word{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-bottom:1px dashed var(--line);padding-block:4px}
+.word span:last-child{color:var(--muted);font-size:.85rem;text-align:right}
+.phrase{border-left:3px solid var(--saffron);padding:4px 0 4px 12px;display:grid;gap:2px}
+.ask{background:var(--saffron-soft);border-radius:8px;padding:12px 14px}
+.say{border:1px solid var(--line);background:transparent;color:var(--accent);border-radius:999px;font-size:.75rem;padding:2px 9px;margin-left:6px;vertical-align:middle}
+.say:hover{border-color:var(--accent)}
+
+.cols-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+
+/* команда */
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:6px;align-content:start;min-height:132px}
+.card:hover{border-color:var(--accent)}
+.card .role{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.25rem;color:var(--accent);line-height:1.15}
+.card .ru{font-size:.8rem;color:var(--muted)}
+.card .back{font-size:.9rem}
+.card .hint{font-size:.72rem;color:var(--saffron);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:auto}
+.card.open{background:var(--accent-soft);border-color:var(--accent)}
+
+/* слова */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:6px;align-content:start;min-width:0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;text-align:left;color:var(--ink);min-height:44px}
+.tile.it-tile{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.1rem}
+.tile.sel{border-color:var(--saffron);background:var(--saffron-soft)}
+.tile.done{background:var(--accent-soft);border-color:transparent;color:var(--muted);cursor:default}
+.tile.wrong{border-color:var(--bad);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{background:var(--accent);color:var(--surface);border:none;border-radius:999px;padding:9px 18px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+
+/* грамматика */
+table.conj{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+table.conj td{padding:5px 8px;border-bottom:1px solid var(--line)}
+table.conj td:first-child{color:var(--muted);width:30%}
+table.conj b{color:var(--saffron)}
+table.conj.multi th{text-align:left;font-family:var(--display);font-style:italic;font-weight:600;font-size:1.15rem;color:var(--accent);padding:6px 8px;border-bottom:2px solid var(--line);white-space:nowrap}
+table.conj.multi th span{display:block;font-family:var(--body);font-style:normal;font-weight:500;font-size:.72rem;color:var(--muted)}
+table.conj.multi td{white-space:nowrap;width:auto}
+table.conj.multi td:first-child{width:auto}
+.tw{overflow-x:auto}
+.ex{display:grid;gap:10px}
+.ex-row{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.ex-row input{font:inherit;font-family:var(--display);font-style:italic;font-weight:600;font-size:1.1rem;width:9.5em;max-width:100%;border:none;border-bottom:2px solid var(--line);background:transparent;color:var(--accent);padding:2px 4px}
+.ex-row .verb{color:var(--muted);font-size:.85rem}
+.ex-row .fb{flex-basis:100%;font-size:.85rem}
+.ex-row.ok{border-color:var(--ok)} .ex-row.ok input{border-color:var(--ok)}
+.ex-row.no{border-color:var(--bad)} .ex-row.no input{border-color:var(--bad)}
+.fb.good{color:var(--ok)} .fb.badc{color:var(--bad)}
+
+/* собеседование */
+.qcard{background:var(--accent);color:var(--surface);border-radius:12px;padding:26px 22px;display:grid;gap:8px;min-height:150px;align-content:center}
+.qcard .q{font-family:var(--display);font-style:italic;font-weight:600;font-size:clamp(1.5rem,4vw,2rem);line-height:1.15}
+.qcard .ru{opacity:.8;font-size:.9rem}
+ul.plain{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+
+/* бизнес-план */
+.bp{display:grid;gap:12px}
+.bp-field{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.bp-field label{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.3rem;color:var(--accent)}
+.bp-field .starter{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px dashed var(--saffron);background:transparent;color:var(--ink);border-radius:999px;padding:3px 10px;font-size:.82rem}
+.chip:hover{background:var(--saffron-soft)}
+.bp-field textarea{font:inherit;width:100%;min-height:84px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);color:var(--ink)}
+.status{font-size:.85rem;color:var(--ok)}
+
+@media (max-width:560px){
+  .plan{grid-template-columns:1fr 1fr;grid-template-rows:none}
+  .plan .room{grid-column:auto!important;grid-row:auto!important;min-height:70px}
+  .plan .r-grande,.plan .r-terrazza{grid-column:1/3!important}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="hero-img"><img src="img/hero.jpg" alt="Светлый зал школы йоги с террасой и видом на лес">
+    <div class="hero-cap"><span class="eyebrow">Lezione di italiano · Арина</span><h1>La mia scuola di yoga</h1></div></div>
+  <p class="lead">Сегодня строим школу на итальянском: проходим по комнатам, собираем команду, учим деловые слова, говорим о будущем через <span class="it">futuro semplice</span> и заполняем бизнес-план. Кнопка <b>▶</b> рядом с фразой читает ее вслух.</p>
+</header>
+
+<nav class="steps" aria-label="Шаги урока">
+  <a href="#esplora"><b>0</b>Esploriamo</a>
+  <a href="#spazio"><b>1</b>Lo spazio</a>
+  <a href="#squadra"><b>2</b>La squadra</a>
+  <a href="#parole"><b>3</b>Le parole</a>
+  <a href="#futuro"><b>4</b>Il futuro</a>
+  <a href="#colloquio"><b>5</b>Il colloquio</a>
+  <a href="#piano"><b>6</b>Il piano</a>
+</nav>
+
+
+<section class="block" id="esplora">
+  <span class="eyebrow">Шаг 0 · Экскурсия по мечте</span>
+  <h2>Esploriamo la scuola</h2>
+  <p class="intro">Это школа, какой ты ее видишь. Нажимай на точки – узнаешь, как называется каждая вещь. Потом включи режим <b>«Найди»</b>: я называю предмет по-итальянски, ты находишь его на фото.</p>
+  <div class="bar">
+    <div class="tabs" role="tablist" id="tourTabs"></div>
+    <div class="tabs"><button class="tab" id="modeExplore" type="button" aria-selected="true">Смотреть</button><button class="tab" id="modeQuiz" type="button" aria-selected="false">Найди</button></div>
+  </div>
+  <div class="tour">
+    <div class="photo" id="photo"><img id="photoImg" alt=""></div>
+    <div class="side">
+      <div class="quizbox" id="quizbox" hidden><span class="muted">Dov'è…? / Dove sono…?</span><span class="q" id="quizQ"></span><span id="quizFb" class="muted"></span><button class="btn ghost" id="quizSkip" type="button" style="justify-self:start">Следующее слово</button></div>
+      <div class="phrase" id="tourPhrase"></div>
+      <div class="wordlist" id="wordlist"></div>
+    </div>
+  </div>
+  <div class="ask"><b>Descrivi la foto:</b> <span class="it">Nella sala c'è… / ci sono…  ·  A sinistra… a destra… al centro…</span><br><span class="muted">Опиши фото вслух: что есть в комнате и где. a sinistra – слева, a destra – справа, al centro – в центре, in fondo – в глубине, sopra – наверху, davanti a – перед.</span></div>
+
+  <div class="box">
+    <span class="eyebrow">Grammatica</span>
+    <h3>C'è / ci sono – «есть, находится»</h3>
+    <div class="cols-2">
+      <ul class="plain">
+        <li><span class="it">c'è</span> + ед. ч. – <span class="it">Sul tavolino c'è una teiera.</span></li>
+        <li><span class="it">ci sono</span> + мн. ч. – <span class="it">Nella sala ci sono molti tappetini.</span></li>
+        <li>вопрос: <span class="it">C'è uno spogliatoio? Ci sono le docce?</span></li>
+        <li>отрицание: <span class="it">Non c'è / Non ci sono…</span></li>
+      </ul>
+      <ul class="plain">
+        <li>будущее: <span class="it">ci sarà / ci saranno</span></li>
+        <li>прошлое: <span class="it">c'era / c'erano</span></li>
+        <li><span class="it">c'è</span> = ci + è, перед гласной ci теряет i</li>
+      </ul>
+    </div>
+    <p class="muted"><b>C'è или è?</b> C'è – когда сообщаем, что что-то есть (новое, обычно с un, una, molti): <span class="it">Sulla terrazza c'è un ombrellone.</span> È / sono – когда говорим, где находится уже известная вещь (с il, la, i): <span class="it">L'ombrellone è sulla terrazza.</span></p>
+    <p class="muted">Вставь c'è, ci sono, è или sono (в 8 и 9 – будущее время).</p>
+    <div class="ex" id="exCe"></div>
+    <div class="bar"><button class="btn" id="checkCe" type="button">Проверить</button><span id="ceScore" class="muted"></span></div>
+  </div>
+
+  <div class="box">
+    <span class="eyebrow">Ripasso</span>
+    <h3>Preposizioni articolate: где что стоит</h3>
+    <div class="tw"><table class="conj multi"><thead><tr><th></th><th>il</th><th>lo</th><th>l'</th><th>la</th><th>i</th><th>gli</th><th>le</th></tr></thead><tbody><tr><td><b>di</b></td><td>del</td><td>dello</td><td>dell'</td><td>della</td><td>dei</td><td>degli</td><td>delle</td></tr><tr><td><b>a</b></td><td>al</td><td>allo</td><td>all'</td><td>alla</td><td>ai</td><td>agli</td><td>alle</td></tr><tr><td><b>da</b></td><td>dal</td><td>dallo</td><td>dall'</td><td>dalla</td><td>dai</td><td>dagli</td><td>dalle</td></tr><tr><td><b>in</b></td><td>nel</td><td>nello</td><td>nell'</td><td>nella</td><td>nei</td><td>negli</td><td>nelle</td></tr><tr><td><b>su</b></td><td>sul</td><td>sullo</td><td>sull'</td><td>sulla</td><td>sui</td><td>sugli</td><td>sulle</td></tr></tbody></table></div>
+    <p class="muted">Посмотри на фото и вставь предлог с артиклем. В скобках – какой предлог нужен.</p>
+    <div class="ex" id="exPrep"></div>
+    <div class="bar"><button class="btn" id="checkPrep" type="button">Проверить</button><span id="prepScore" class="muted"></span></div>
+  </div>
+</section>
+
+<section class="block" id="spazio">
+  <span class="eyebrow">Шаг 1 · Комнаты</span>
+  <h2>Lo spazio</h2>
+  <p class="intro">Это план будущей школы. Нажимай на комнату: слова, фраза о будущем и вопрос к тебе. Отвечай вслух – описывай свою школу так, как ее видишь.</p>
+  <div>
+    <div class="plan" id="plan" role="group" aria-label="План школы"></div>
+    <div class="plan-legend"><span>↓ l'entrata</span><span>la natura →</span></div>
+  </div>
+  <div class="detail" id="detail" aria-live="polite"></div>
+</section>
+
+<section class="block" id="squadra">
+  <span class="eyebrow">Шаг 2 · Команда</span>
+  <h2>La squadra</h2>
+  <p class="intro">Кто работает в школе и чем занимается? Сначала попробуй сказать сама по схеме <span class="it">Si occupa di…</span> / <span class="it">Si occupa dei…</span>, потом переверни карточку.</p>
+  <div class="team" id="team"></div>
+  <div class="cols-2">
+    <div class="box">
+      <h3>Как говорить о ролях</h3>
+      <ul class="plain">
+        <li><span class="it">si occupa di</span> + сущ. – занимается</li>
+        <li><span class="it">è responsabile di</span> – отвечает за</li>
+        <li><span class="it">delego a</span> + кому – делегирую</li>
+        <li><span class="it">assumo / assumerò</span> – нанимаю / найму</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Di + артикль</h3>
+      <ul class="plain">
+        <li>di + il = <span class="it">del</span> (del marketing)</li>
+        <li>di + i = <span class="it">dei</span> (dei clienti)</li>
+        <li>di + la = <span class="it">della</span> (della pulizia)</li>
+        <li>di + le = <span class="it">delle</span> (delle tasse)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="parole">
+  <span class="eyebrow">Шаг 3 · Деньги и клиенты</span>
+  <h2>Le parole del business</h2>
+  <p class="intro">Найди пары: слово на итальянском и перевод. Нажми на итальянское, затем на русское.</p>
+  <div class="bar"><span id="matchScore" class="muted">0 из 0</span><button class="btn ghost" id="matchReset" type="button">Новый набор</button></div>
+  <div class="match"><div class="col" id="colIt"></div><div class="col" id="colRu"></div></div>
+</section>
+
+<section class="block" id="futuro">
+  <span class="eyebrow">Шаг 4 · Грамматика</span>
+  <h2>Tra tre anni… <span class="it">il futuro semplice</span></h2>
+  <div class="box">
+    <h3>Правильные глаголы: -are, -ere, -ire</h3>
+    <div class="tw"><table class="conj multi"><thead><tr><th></th><th>lavorare<span>-are → -er-</span></th><th>vendere<span>-ere</span></th><th>aprire<span>-ire</span></th></tr></thead><tbody><tr><td>io</td><td>lavorer<b>ò</b></td><td>vender<b>ò</b></td><td>aprir<b>ò</b></td></tr><tr><td>tu</td><td>lavorer<b>ai</b></td><td>vender<b>ai</b></td><td>aprir<b>ai</b></td></tr><tr><td>lui / lei</td><td>lavorer<b>à</b></td><td>vender<b>à</b></td><td>aprir<b>à</b></td></tr><tr><td>noi</td><td>lavorer<b>emo</b></td><td>vender<b>emo</b></td><td>aprir<b>emo</b></td></tr><tr><td>voi</td><td>lavorer<b>ete</b></td><td>vender<b>ete</b></td><td>aprir<b>ete</b></td></tr><tr><td>loro</td><td>lavorer<b>anno</b></td><td>vender<b>anno</b></td><td>aprir<b>anno</b></td></tr></tbody></table></div>
+    <p class="muted">Окончания у всех одинаковые: -ò, -ai, -à, -emo, -ete, -anno. У глаголов на -are <b>a</b> меняется на <b>e</b>: lavor<b>a</b>re → lavor<b>e</b>rò. У -ere и -ire просто убираем последнюю -e: vender(e) → venderò, aprir(e) → aprirò.</p>
+    <ul class="plain">
+      <li><span class="it">Venderemo tappetini e abbigliamento.</span> – Мы будем продавать коврики и одежду.</li>
+      <li><span class="it">Aprirò la scuola tra tre anni.</span> – Я открою школу через три года.</li>
+      <li><span class="it">Le clienti sceglieranno l'abbonamento alla reception.</span> – Клиентки будут выбирать абонемент на ресепшене.</li>
+    </ul>
+    <p class="muted">Глаголы на -care и -gare добавляют h, чтобы сохранить звук: dedicare → dedic<b>h</b>erò, pagare → pag<b>h</b>eremo.</p>
+  </div>
+  <div class="box">
+    <h3>Неправильные глаголы полностью</h3>
+    <p class="muted">Меняется только основа, окончания те же. Прокрути таблицу вбок, если не помещается.</p>
+    <div class="tw"><table class="conj multi"><thead><tr><th></th><th>essere<span>быть</span></th><th>avere<span>иметь</span></th><th>fare<span>делать</span></th><th>potere<span>мочь</span></th><th>dovere<span>быть должной</span></th><th>volere<span>хотеть</span></th></tr></thead><tbody><tr><td>io</td><td>sar<b>ò</b></td><td>avr<b>ò</b></td><td>far<b>ò</b></td><td>potr<b>ò</b></td><td>dovr<b>ò</b></td><td>vorr<b>ò</b></td></tr><tr><td>tu</td><td>sar<b>ai</b></td><td>avr<b>ai</b></td><td>far<b>ai</b></td><td>potr<b>ai</b></td><td>dovr<b>ai</b></td><td>vorr<b>ai</b></td></tr><tr><td>lui / lei</td><td>sar<b>à</b></td><td>avr<b>à</b></td><td>far<b>à</b></td><td>potr<b>à</b></td><td>dovr<b>à</b></td><td>vorr<b>à</b></td></tr><tr><td>noi</td><td>sar<b>emo</b></td><td>avr<b>emo</b></td><td>far<b>emo</b></td><td>potr<b>emo</b></td><td>dovr<b>emo</b></td><td>vorr<b>emo</b></td></tr><tr><td>voi</td><td>sar<b>ete</b></td><td>avr<b>ete</b></td><td>far<b>ete</b></td><td>potr<b>ete</b></td><td>dovr<b>ete</b></td><td>vorr<b>ete</b></td></tr><tr><td>loro</td><td>sar<b>anno</b></td><td>avr<b>anno</b></td><td>far<b>anno</b></td><td>potr<b>anno</b></td><td>dovr<b>anno</b></td><td>vorr<b>anno</b></td></tr></tbody></table></div>
+    <div class="tw"><table class="conj multi"><thead><tr><th></th><th>andare<span>идти</span></th><th>venire<span>приходить</span></th><th>vedere<span>видеть</span></th><th>sapere<span>знать</span></th><th>stare<span>находиться</span></th><th>tenere<span>держать, вести</span></th></tr></thead><tbody><tr><td>io</td><td>andr<b>ò</b></td><td>verr<b>ò</b></td><td>vedr<b>ò</b></td><td>sapr<b>ò</b></td><td>star<b>ò</b></td><td>terr<b>ò</b></td></tr><tr><td>tu</td><td>andr<b>ai</b></td><td>verr<b>ai</b></td><td>vedr<b>ai</b></td><td>sapr<b>ai</b></td><td>star<b>ai</b></td><td>terr<b>ai</b></td></tr><tr><td>lui / lei</td><td>andr<b>à</b></td><td>verr<b>à</b></td><td>vedr<b>à</b></td><td>sapr<b>à</b></td><td>star<b>à</b></td><td>terr<b>à</b></td></tr><tr><td>noi</td><td>andr<b>emo</b></td><td>verr<b>emo</b></td><td>vedr<b>emo</b></td><td>sapr<b>emo</b></td><td>star<b>emo</b></td><td>terr<b>emo</b></td></tr><tr><td>voi</td><td>andr<b>ete</b></td><td>verr<b>ete</b></td><td>vedr<b>ete</b></td><td>sapr<b>ete</b></td><td>star<b>ete</b></td><td>terr<b>ete</b></td></tr><tr><td>loro</td><td>andr<b>anno</b></td><td>verr<b>anno</b></td><td>vedr<b>anno</b></td><td>sapr<b>anno</b></td><td>star<b>anno</b></td><td>terr<b>anno</b></td></tr></tbody></table></div>
+    <p class="muted"><b>essere</b> в безличной форме: ci sarà (будет – ед. ч.), ci saranno (будут – мн. ч.).</p>
+    <ul class="plain">
+      <li><span class="it">Sarò un'insegnante e una fondatrice.</span> – Я буду преподавателем и основательницей.</li>
+      <li><span class="it">Gli insegnanti terranno le lezioni del mattino.</span> – Преподаватели будут вести утренние занятия.</li>
+      <li><span class="it">Le clienti verranno anche da altre città.</span> – Клиентки будут приезжать и из других городов.</li>
+      <li><span class="it">Dovrò imparare a delegare.</span> – Мне нужно будет научиться делегировать.</li>
+    </ul>
+  </div>
+  <h3>Esercizio</h3>
+  <p class="intro">Поставь глагол в скобках в futuro. Все предложения – про твою школу.</p>
+  <div class="ex" id="ex"></div>
+  <div class="bar"><button class="btn" id="checkEx" type="button">Проверить</button><span id="exScore" class="muted"></span></div>
+
+  <div class="box">
+    <h3>Когда хочется мягче: condizionale</h3>
+    <ul class="plain">
+      <li><span class="it">Vorrei</span> aprire una scuola entro tre anni. – Я бы хотела…</li>
+      <li><span class="it">Avrei bisogno di</span> un buon commercialista. – Мне был бы нужен…</li>
+      <li><span class="it">Mi piacerebbe</span> collaborare con una scuola in Cina. – Мне бы хотелось…</li>
+      <li><span class="it">Mi servirebbe</span> un locale più grande. – Мне понадобилось бы…</li>
+    </ul>
+    <p class="muted">Futuro – план («так будет»), condizionale – желание или потребность.</p>
+  </div>
+</section>
+
+<section class="block" id="colloquio">
+  <span class="eyebrow">Шаг 5 · Ролевая игра</span>
+  <h2>Il colloquio</h2>
+  <p class="intro">Ты – fondatrice, собеседуешь преподавателя. Вопросы на <span class="it">Lei</span> (вежливая форма). Нажимай «Следующий вопрос», задавай его вслух, выслушивай ответ и реагируй.</p>
+  <div class="qcard" aria-live="polite"><span class="q" id="qText"></span><span class="ru" id="qRu"></span></div>
+  <div class="bar"><span id="qNum" class="muted"></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="qSay" type="button">▶ Послушать</button><button class="btn" id="qNext" type="button">Следующий вопрос</button></div></div>
+  <div class="cols-2">
+    <div class="box">
+      <h3>Реакции</h3>
+      <ul class="plain">
+        <li><span class="it">Interessante, mi racconti di più.</span> – Интересно, расскажите подробнее.</li>
+        <li><span class="it">Perfetto, grazie.</span> – Отлично, спасибо.</li>
+        <li><span class="it">Capisco.</span> – Понимаю.</li>
+        <li><span class="it">Le faremo sapere entro venerdì.</span> – Мы сообщим вам до пятницы.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Рассказать о школе</h3>
+      <ul class="plain">
+        <li><span class="it">La nostra missione è aiutare le donne a stare meglio.</span></li>
+        <li><span class="it">Uniamo lo yoga alle pratiche di respirazione.</span></li>
+        <li><span class="it">Paghiamo sempre gli stipendi in tempo.</span></li>
+        <li><span class="it">Per noi il rispetto è molto importante.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="piano">
+  <span class="eyebrow">Шаг 6 · Итог урока</span>
+  <h2>Il mio business plan</h2>
+  <p class="intro">Заполни по-итальянски, коротко, 2–3 предложения в каждом пункте. Нажми на подсказку – начало фразы появится в поле. Используй то, что тренировали: <span class="it">c'è / ci sono</span>, <span class="it">ci sarà / ci saranno</span> и futuro. Текст сохраняется в этом браузере, а в конце его можно скопировать.</p>
+  <div class="bp" id="bp"></div>
+  <div class="bar"><span class="status" id="bpStatus"></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="bpClear" type="button">Очистить</button><button class="btn" id="bpCopy" type="button">Скопировать план</button></div></div>
+  <textarea id="bpFallback" hidden readonly style="width:100%;min-height:160px"></textarea>
+</section>
+</div>
+
+<script>
+const canSpeak = 'speechSynthesis' in window;
+function say(text){
+  if(!canSpeak) return;
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='it-IT'; u.rate=.9; speechSynthesis.speak(u);}catch(e){}
+}
+function sayBtn(text){
+  if(!canSpeak) return '';
+  return `<button class="say" type="button" data-say="${text.replace(/"/g,'&quot;')}" aria-label="Послушать">▶</button>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-say]'); if(b) say(b.dataset.say);});
+
+/* ---------- 1. Комнаты ---------- */
+const rooms = [
+ {id:'grande', it:'la sala grande', ru:'большой зал',
+  words:[['il tappetino','коврик'],['la coperta','плед'],['il cuscino','подушка'],['le finestre','окна'],['il pavimento in legno','деревянный пол']],
+  phrase:['La sala grande sarà luminosa, con grandi finestre che danno sulla natura.','Большой зал будет светлым, с окнами на природу.'],
+  ask:['Quante persone ci staranno? Quali lezioni ci saranno?','Сколько человек поместится? Какие будут занятия?']},
+ {id:'piccola', it:'la sala piccola', ru:'малый зал для медитаций',
+  words:[['il silenzio','тишина'],['la luce soffusa','приглушенный свет'],['la meditazione','медитация'],['il respiro','дыхание']],
+  phrase:['Nella sala piccola faremo meditazione e pratiche di respirazione.','В малом зале будем делать медитации и дыхательные практики.'],
+  ask:['Cosa faranno le clienti in questa sala?','Что клиентки будут делать в этом зале?']},
+ {id:'video', it:'lo studio di registrazione', ru:'студия для съемки',
+  words:[['la telecamera','камера'],['il microfono','микрофон'],['le luci','свет'],['il corso online','онлайн-курс']],
+  phrase:['Qui registreremo le lezioni e i corsi online.','Здесь будем записывать уроки и онлайн-курсы.'],
+  ask:['Che corsi online creerai?','Какие онлайн-курсы ты создашь?']},
+ {id:'spogliatoio', it:'lo spogliatoio', ru:'раздевалка',
+  words:[['l\'armadietto','шкафчик'],['la panca','скамейка'],['l\'asciugacapelli','фен'],['lo specchio','зеркало']],
+  phrase:['Lo spogliatoio sarà comodo e pulito.','Раздевалка будет удобной и чистой.'],
+  ask:['Cosa ci sarà nello spogliatoio?','Что будет в раздевалке?']},
+ {id:'docce', it:'le docce', ru:'душевые',
+  words:[['la doccia','душ'],['l\'asciugamano','полотенце'],['il sapone','мыло'],['l\'acqua calda','горячая вода']],
+  phrase:['Dopo la lezione le clienti potranno fare la doccia.','После занятия клиентки смогут принять душ.'],
+  ask:['Darai gli asciugamani alle clienti?','Будешь выдавать клиенткам полотенца?']},
+ {id:'negozio', it:'il negozio', ru:'магазин',
+  words:[['l\'abbigliamento','одежда'],['la cassa','касса'],['il prezzo','цена'],['vendere','продавать']],
+  phrase:['Nel negozio venderemo tappetini e abbigliamento per lo yoga.','В магазине будем продавать коврики и одежду для йоги.'],
+  ask:['Cosa venderai nel negozio?','Что ты будешь продавать?']},
+ {id:'ufficio', it:'l\'ufficio', ru:'офис',
+  words:[['la scrivania','письменный стол'],['i documenti','документы'],['la riunione','совещание'],['il contratto','договор']],
+  phrase:['In ufficio farò le riunioni con la squadra.','В офисе я буду проводить встречи с командой.'],
+  ask:['Chi lavorerà in ufficio?','Кто будет работать в офисе?']},
+ {id:'ingresso', it:'l\'ingresso e la reception', ru:'вход и ресепшен',
+  words:[['la reception','ресепшен (читается «ресЭпшон»)'],['l\'accettazione','ресепшен, по-итальянски'],['il bancone','стойка'],['accogliere','встречать'],['la prenotazione','запись, бронь'],['l\'abbonamento','абонемент']],
+  phrase:['L\'amministratrice accoglierà le clienti con un sorriso.','Администратор будет встречать клиенток с улыбкой.'],
+  ask:['Come accoglierete le nuove clienti?','Как вы будете встречать новых клиенток?']},
+ {id:'terrazza', it:'la terrazza', ru:'терраса', terr:true,
+  words:[['la sdraio / le sdraio','шезлонг – шезлонги'],['il lettino','лежак'],['la chaise longue','шезлонг-кушетка'],['le piante','растения'],['la vista','вид'],['rilassarsi','расслабляться']],
+  phrase:['Sulla terrazza le clienti potranno stare in silenzio e guardare la natura.','На террасе клиентки смогут побыть в тишине и посмотреть на природу.'],
+  ask:['Cosa farai tu sulla terrazza?','Что ты сама будешь делать на террасе?']},
+];
+const plan=document.getElementById('plan'), detail=document.getElementById('detail');
+rooms.forEach(r=>{
+  const b=document.createElement('button');
+  b.type='button'; b.className='room r-'+r.id+(r.terr?' terr':''); b.setAttribute('aria-pressed','false');
+  b.innerHTML=`<span class="rname">${r.it}</span><span class="rlab">${r.ru}</span>`;
+  b.addEventListener('click',()=>showRoom(r.id));
+  plan.appendChild(b);
+});
+function showRoom(id){
+  const r=rooms.find(x=>x.id===id);
+  plan.querySelectorAll('.room').forEach(b=>b.setAttribute('aria-pressed',b.classList.contains('r-'+id)?'true':'false'));
+  detail.innerHTML=`
+   <div><span class="eyebrow">${r.ru}</span><h3 class="it" style="font-size:1.9rem">${r.it} ${sayBtn(r.it)}</h3></div>
+   <div class="words">${r.words.map(w=>`<div class="word"><span class="it">${w[0]}</span><span>${w[1]}</span></div>`).join('')}</div>
+   <div class="phrase"><span class="it">${r.phrase[0]} ${sayBtn(r.phrase[0])}</span><span class="muted">${r.phrase[1]}</span></div>
+   <div class="ask"><b>Domanda per te:</b> <span class="it">${r.ask[0]}</span><br><span class="muted">${r.ask[1]}</span></div>`;
+}
+showRoom('grande');
+
+/* ---------- 2. Команда ---------- */
+const team=[
+ ['la fondatrice','основательница (это ты)','Dirige la scuola, tiene le lezioni principali e organizza seminari all\'estero.'],
+ ['l\'amministratrice','администратор','Si occupa delle clienti e delle prenotazioni.'],
+ ['gli insegnanti','преподаватели','Tengono le lezioni di yoga e di respirazione.'],
+ ['l\'assistente personale','личный ассистент','Organizza gli incontri e compra i biglietti.'],
+ ['il commercialista','бухгалтер, налоговый консультант','Si occupa delle tasse e della contabilità.'],
+ ['l\'avvocato','юрист','Controlla i contratti e i documenti.'],
+ ['il responsabile marketing','маркетолог, PR','Cura i social e trova nuove clienti.'],
+ ['il team online','команда онлайн-направления','Crea e vende i corsi online.'],
+ ['l\'addetta alle pulizie','отвечает за чистоту','Tiene puliti gli spazi della scuola.'],
+];
+const teamEl=document.getElementById('team');
+team.forEach(t=>{
+  const c=document.createElement('button'); c.type='button'; c.className='card';
+  const front=`<span class="role">${t[0]}</span><span class="ru">${t[1]}</span><span class="hint">Di cosa si occupa? →</span>`;
+  const back=`<span class="role">${t[0]}</span><span class="back">${t[2]}</span><span class="hint">${canSpeak?'▶ нажми еще раз – послушать':'нажми, чтобы закрыть'}</span>`;
+  c.innerHTML=front; let state=0;
+  c.addEventListener('click',()=>{
+    if(state===0){c.innerHTML=back;c.classList.add('open');state=1;}
+    else if(state===1 && canSpeak){say(t[2]);state=2;}
+    else {c.innerHTML=front;c.classList.remove('open');state=0;}
+  });
+  teamEl.appendChild(c);
+});
+
+/* ---------- 3. Пары ---------- */
+const vocab=[
+ ['l\'affitto','аренда'],['l\'investimento','вложения'],['le spese','расходы'],['il preventivo','смета'],
+ ['lo stipendio','зарплата'],['le tasse','налоги'],['il guadagno','прибыль'],['il fatturato','оборот, выручка'],
+ ['l\'abbonamento','абонемент'],['la lezione di prova','пробное занятие'],['il passaparola','сарафанное радио'],
+ ['la clientela','клиентура'],['il contratto','договор'],['assumere','нанимать'],['delegare','делегировать'],
+ ['la sede','помещение школы, адрес'],['la ristrutturazione','ремонт'],['il socio','партнер по бизнесу']
+];
+const colIt=document.getElementById('colIt'), colRu=document.getElementById('colRu'), mScore=document.getElementById('matchScore');
+let sel=null, matched=0, setSize=0;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function newSet(){
+  const set=shuffle(vocab).slice(0,7); setSize=set.length; matched=0; sel=null;
+  colIt.innerHTML=''; colRu.innerHTML='';
+  shuffle(set).forEach((p)=>{const b=document.createElement('button');b.type='button';b.className='tile it-tile';b.textContent=p[0];b.dataset.k=p[0];b.addEventListener('click',()=>pick(b,'it'));colIt.appendChild(b);});
+  shuffle(set).forEach((p)=>{const b=document.createElement('button');b.type='button';b.className='tile';b.textContent=p[1];b.dataset.k=p[0];b.addEventListener('click',()=>pick(b,'ru'));colRu.appendChild(b);});
+  mScore.textContent=`0 из ${setSize}`;
+}
+function pick(b,side){
+  if(b.classList.contains('done')) return;
+  if(side==='it'){ colIt.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); sel=b; say(b.textContent); return; }
+  if(!sel) { b.classList.add('wrong'); setTimeout(()=>b.classList.remove('wrong'),350); return; }
+  if(sel.dataset.k===b.dataset.k){
+    sel.classList.remove('sel'); sel.classList.add('done'); b.classList.add('done'); sel=null; matched++;
+    mScore.textContent= matched===setSize ? `Bravissima! ${setSize} из ${setSize}` : `${matched} из ${setSize}`;
+  } else { b.classList.add('wrong'); setTimeout(()=>b.classList.remove('wrong'),350); }
+}
+document.getElementById('matchReset').addEventListener('click',newSet);
+newSet();
+
+/* ---------- 4. Futuro ---------- */
+const ex=[
+ ['Tra tre anni','avere, io','avrò','una scuola di yoga.'],
+ ['Nella scuola ci','essere','saranno','tre sale luminose.'],
+ ['','assumere, io','assumerò','altri insegnanti.'],
+ ['L\'amministratrice','accogliere','accoglierà','le clienti.'],
+ ['Noi','registrare','registreremo','le lezioni online.'],
+ ['','fare, io','farò','seminari all\'estero.'],
+ ['Le clienti','potere','potranno','rilassarsi sulla terrazza.'],
+ ['I collaboratori','ricevere','riceveranno','lo stipendio sempre in tempo.'],
+ ['','dedicare, io','dedicherò','tempo anche alla mia famiglia.'],
+ ['Il commercialista','occuparsi','si occuperà','delle tasse.'],
+];
+const exEl=document.getElementById('ex');
+const strip=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim().replace(/\s+/g,' ');
+ex.forEach((e,i)=>{
+  const row=document.createElement('div'); row.className='ex-row';
+  row.innerHTML=`${e[0]?`<span>${e[0]}</span>`:''}<input id="ex${i}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${e[1]}"><span class="verb">(${e[1]})</span><span>${e[3]}</span><span class="fb"></span>`;
+  exEl.appendChild(row);
+});
+document.getElementById('checkEx').addEventListener('click',()=>{
+  let ok=0;
+  ex.forEach((e,i)=>{
+    const inp=document.getElementById('ex'+i), row=inp.parentElement, fb=row.querySelector('.fb'), v=inp.value;
+    row.classList.remove('ok','no'); fb.className='fb'; fb.textContent='';
+    if(!v.trim()) return;
+    if(v.trim().toLowerCase()===e[2]){ row.classList.add('ok'); fb.classList.add('good'); fb.textContent='Giusto!'; ok++; }
+    else if(strip(v)===strip(e[2])){ row.classList.add('ok'); fb.classList.add('good'); fb.textContent=`Почти: не забудь ударение – ${e[2]}`; ok++; }
+    else { row.classList.add('no'); fb.classList.add('badc'); fb.textContent=`Правильно: ${e[2]}`; }
+  });
+  document.getElementById('exScore').textContent=`${ok} из ${ex.length}`;
+});
+
+/* ---------- 5. Собеседование ---------- */
+const qs=[
+ ['Da quanto tempo insegna yoga?','Как давно вы преподаете йогу?'],
+ ['Che tipo di yoga insegna?','Какой вид йоги вы преподаете?'],
+ ['Dove ha studiato?','Где вы учились?'],
+ ['Perché vuole lavorare con noi?','Почему вы хотите работать у нас?'],
+ ['Ha esperienza con le donne in gravidanza?','Есть ли у вас опыт работы с беременными?'],
+ ['È disponibile nel fine settimana?','Вы можете работать в выходные?'],
+ ['Come reagisce quando una cliente non è contenta?','Как вы реагируете, если клиентка недовольна?'],
+ ['Che cosa è importante per Lei nel lavoro?','Что для вас важно в работе?'],
+ ['Potrebbe fare una lezione di prova la settimana prossima?','Могли бы вы провести пробное занятие на следующей неделе?'],
+ ['Ha domande per noi?','У вас есть вопросы к нам?'],
+];
+let qi=0; const qText=document.getElementById('qText'), qRu=document.getElementById('qRu'), qNum=document.getElementById('qNum');
+function showQ(){qText.textContent=qs[qi][0]; qRu.textContent=qs[qi][1]; qNum.textContent=`Вопрос ${qi+1} из ${qs.length}`;}
+document.getElementById('qNext').addEventListener('click',()=>{qi=(qi+1)%qs.length;showQ();});
+const qSay=document.getElementById('qSay'); if(!canSpeak) qSay.hidden=true; qSay.addEventListener('click',()=>say(qs[qi][0]));
+showQ();
+
+/* ---------- 6. Бизнес-план ---------- */
+const bpFields=[
+ ['missione','La missione','Миссия: зачем существует школа',['La nostra missione è…','Vogliamo aiutare…']],
+ ['clienti','Le clienti','Кто приходит и с каким запросом',['Le nostre clienti sono…','Vengono da noi perché…','Ci saranno lezioni per…']],
+ ['spazio','Lo spazio','Помещение, залы, где находится',['La scuola sarà…','Nella scuola ci sarà…','Ci saranno…','Sulla terrazza c\'è…','Non ci sarà…','Avrei bisogno di un locale…']],
+ ['squadra','La squadra','Кого нанимаешь, что делегируешь',['Nella squadra ci saranno…','Assumerò…','Delegherò … a …','Io mi occuperò di…']],
+ ['soldi','Le spese e le entrate','Расходы и откуда доход',['Le spese principali saranno…','Guadagneremo con…','L\'investimento iniziale sarà di circa…']],
+ ['diverso','Perché siamo diversi','Чем школа отличается от других',['Da noi c\'è…','Da noi non ci sono…','Da noi le clienti troveranno…','A differenza delle altre scuole…']],
+ ['passi','I primi passi','Что делаешь в ближайший месяц',['Questo mese scriverò…','Visiterò…','Vorrei…']],
+];
+const KEY='arina-bp-v1'; let saved={};
+try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ saved={}; }
+const bpEl=document.getElementById('bp'), bpStatus=document.getElementById('bpStatus');
+bpFields.forEach(f=>{
+  const d=document.createElement('div'); d.className='bp-field';
+  d.innerHTML=`<label for="bp-${f[0]}">${f[1]}</label><span class="muted">${f[2]}</span>
+   <div class="starter">${f[4-1].map(s=>`<button type="button" class="chip">${s}</button>`).join('')}</div>
+   <textarea id="bp-${f[0]}" spellcheck="false"></textarea>`;
+  const ta=d.querySelector('textarea'); ta.value=saved[f[0]]||'';
+  d.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+    const t=ch.textContent.replace(/…$/,' '); ta.value=(ta.value&&!/\s$/.test(ta.value)?ta.value+' ':ta.value)+t; ta.focus(); store();
+  }));
+  ta.addEventListener('input',store);
+  bpEl.appendChild(d);
+});
+let tmr;
+function store(){
+  bpFields.forEach(f=>saved[f[0]]=document.getElementById('bp-'+f[0]).value);
+  try{ localStorage.setItem(KEY,JSON.stringify(saved)); clearTimeout(tmr); bpStatus.textContent='Сохранено'; tmr=setTimeout(()=>bpStatus.textContent='',1500);}catch(e){}
+}
+function planText(){
+  return 'IL MIO BUSINESS PLAN\n\n'+bpFields.map(f=>`${f[1].toUpperCase()}\n${(saved[f[0]]||'').trim()||'–'}`).join('\n\n');
+}
+document.getElementById('bpCopy').addEventListener('click',()=>{
+  store(); const txt=planText(), fb=document.getElementById('bpFallback');
+  const fallback=()=>{fb.hidden=false; fb.value=txt; fb.focus(); fb.select(); bpStatus.textContent='Выдели текст ниже и скопируй';};
+  try{ navigator.clipboard.writeText(txt).then(()=>{bpStatus.textContent='Скопировано';},fallback);}catch(e){fallback();}
+});
+let clearArmed=false;
+document.getElementById('bpClear').addEventListener('click',e=>{
+  if(!clearArmed){clearArmed=true;e.target.textContent='Точно очистить?';setTimeout(()=>{clearArmed=false;e.target.textContent='Очистить';},3000);return;}
+  bpFields.forEach(f=>document.getElementById('bp-'+f[0]).value=''); store(); clearArmed=false; e.target.textContent='Очистить';
+});
+
+/* ---------- 0. Фото-экскурсия ---------- */
+const scenes=[
+ {id:'sala',name:'La sala grande',img:'img/sala.jpg',tall:false,
+  phrase:['Nella sala grande ci sono tanti tappetini e tanta luce naturale.','В большом зале много ковриков и естественного света.'],
+  pts:[
+   [18,32,'le vetrate','панорамные окна',1],[38,32,'le tende di lino','льняные шторы',1],[40,15,'il drappeggio','драпировка под потолком',0],
+   [58,12,'la lampada a sospensione','подвесной светильник',0],[34,27,'l\'ulivo','оливковое дерево',0],[26,46,'i fiori bianchi','белые цветы',1],
+   [69,37,'il fiore di loto','цветок лотоса',0],[69,46,'la statua del Buddha','статуя Будды',0],[95,46,'le mensole','полки',1],
+   [56,66,'il cuscino da meditazione','подушка для медитации',0],[57,71,'il tappetino','коврик',0],[68,68,'la coperta','плед',0],
+   [47,65,'il mattoncino (il blocco)','блок для йоги',0],[18,79,'la candela','свеча',0],[10,76,'il vaso','ваза, кашпо',0],
+   [24,87,'il tavolino','столик',0],[49,93,'il pouf','пуф',0],[69,87,'il tappeto di iuta','джутовый ковер',0],[62,57,'il parquet','паркет',0]]},
+ {id:'terrazza',name:'La terrazza',img:'img/terrazza.jpg',tall:false,
+  phrase:['Sulla terrazza ci saranno divani, piante e una vista sul bosco.','На террасе будут диваны, растения и вид на лес.'],
+  pts:[
+   [26,31,'l\'ombrellone','зонт от солнца',0],[35,26,'il bosco','лес',0],[30,13,'il pergolato','навес, пергола',0],
+   [42,9,'il gelsomino','жасмин',0],[7,44,'la ringhiera','перила',0],[9,74,'il divano','диван',0],[12,63,'i cuscini','подушки',1],
+   [18,52,'la poltrona','кресло',0],[41,53,'la lavanda','лаванда',0],[44,82,'il tavolino','столик',0],[50,70,'la teiera','заварочный чайник',0],
+   [47,76,'i libri','книги',1],[40,73,'le candele','свечи',1],[49,56,'la lanterna','фонарь',0],[75,78,'il pouf','пуф',0],
+   [62,32,'la porta scorrevole','раздвижная дверь',0]]},
+ {id:'reception',name:'La reception e il negozio',img:'img/reception.jpg',tall:true,
+  phrase:['Alla reception si comprano gli abbonamenti e i prodotti per lo yoga.','На ресепшене покупают абонементы и товары для йоги.'],
+  pts:[
+   [62,60,'il bancone','стойка',0],[55,50,'il computer','компьютер',0],[52,57,'il logo','логотип',0],
+   [41,21,'la lampada a sospensione','подвесной светильник',0],[81,14,'le piante ricadenti','свисающие растения',1],[66,37,'gli scaffali','стеллажи',1],
+   [63,42,'i prodotti per il corpo','средства для тела',1],[86,38,'l\'abbigliamento','одежда',0],[88,48,'i tappetini arrotolati','свернутые коврики',1],
+   [73,33,'la lampada di sale','соляная лампа',0],[47,40,'i cartelli','указатели',1],[30,46,'il corridoio','коридор',0],
+   [7,33,'la finestra','окно',0],[94,68,'il cesto','корзина',0],[13,90,'la candela','свеча',0],[19,85,'la ciotola con i sassi','чаша с камнями',0]]}
+];
+let scene=scenes[0], quiz=false, quizOrder=[], quizI=0;
+const photo=document.getElementById('photo'), photoImg=document.getElementById('photoImg'), wordlist=document.getElementById('wordlist');
+const tabsEl=document.getElementById('tourTabs');
+scenes.forEach(sc=>{const t=document.createElement('button');t.type='button';t.className='tab';t.role='tab';t.textContent=sc.name;t.dataset.id=sc.id;
+  t.addEventListener('click',()=>loadScene(sc.id));tabsEl.appendChild(t);});
+function loadScene(id){
+  scene=scenes.find(x=>x.id===id);
+  tabsEl.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.id===id));
+  photo.classList.toggle('tall',scene.tall);
+  photoImg.src=scene.img; photoImg.alt=scene.name;
+  photo.querySelectorAll('.dot,.lbl').forEach(n=>n.remove());
+  scene.pts.forEach((p,i)=>{
+    const d=document.createElement('button');d.type='button';d.className='dot';d.style.left=p[0]+'%';d.style.top=p[1]+'%';
+    d.setAttribute('aria-label',quiz?'точка '+(i+1):p[2]);d.dataset.i=i;
+    d.addEventListener('click',()=>quiz?answer(i,d):showPoint(i));photo.appendChild(d);});
+  const ph=scene.phrase;
+  document.getElementById('tourPhrase').innerHTML=`<span class="it">${ph[0]} ${sayBtn(ph[0])}</span><span class="muted">${ph[1]}</span>`;
+  wordlist.innerHTML=scene.pts.map((p,i)=>`<button type="button" class="wl" data-i="${i}"><span class="it">${p[2]}</span><span>${p[3]}</span></button>`).join('');
+  wordlist.querySelectorAll('.wl').forEach(b=>b.addEventListener('click',()=>{if(!quiz)showPoint(+b.dataset.i);}));
+  if(quiz) startQuiz();
+}
+function showPoint(i){
+  const p=scene.pts[i];
+  photo.querySelectorAll('.lbl').forEach(n=>n.remove());
+  photo.querySelectorAll('.dot').forEach(d=>d.classList.toggle('on',+d.dataset.i===i));
+  wordlist.querySelectorAll('.wl').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
+  const l=document.createElement('span');l.className='lbl';l.textContent=p[2];
+  l.style.left=Math.min(Math.max(p[0],14),86)+'%';l.style.top=p[1]+'%';photo.appendChild(l);
+  say(p[2]);
+}
+function setMode(q){
+  quiz=q; photo.classList.toggle('quiz',q);
+  document.getElementById('modeExplore').setAttribute('aria-selected',!q);
+  document.getElementById('modeQuiz').setAttribute('aria-selected',q);
+  document.getElementById('quizbox').hidden=!q; wordlist.hidden=q;
+  loadScene(scene.id);
+}
+function startQuiz(){quizOrder=shuffle(scene.pts.map((_,i)=>i));quizI=0;askQ();}
+function askQ(){
+  const fb=document.getElementById('quizFb');
+  if(quizI>=quizOrder.length){document.getElementById('quizQ').textContent='Brava! Finito.';fb.textContent='Выбери другую комнату или начни заново.';return;}
+  const p=scene.pts[quizOrder[quizI]];
+  document.getElementById('quizQ').textContent=(p[4]?'Dove sono ':'Dov\'è ')+p[2]+'?';
+  fb.textContent=`${quizI+1} из ${quizOrder.length}`; say((p[4]?'Dove sono ':'Dov\'è ')+p[2]+'?');
+}
+function answer(i,d){
+  const want=quizOrder[quizI], fb=document.getElementById('quizFb');
+  if(quizI>=quizOrder.length) return;
+  if(i===want){d.classList.remove('miss');d.classList.add('found');
+    const p=scene.pts[i]; fb.textContent=(p[4]?'Eccoli! ':'Eccolo! ')+p[3]; quizI++; setTimeout(askQ,1100);}
+  else{d.classList.add('miss');setTimeout(()=>d.classList.remove('miss'),600);fb.textContent='Non qui – prova ancora.';}
+}
+document.getElementById('modeExplore').addEventListener('click',()=>setMode(false));
+document.getElementById('modeQuiz').addEventListener('click',()=>setMode(true));
+document.getElementById('quizSkip').addEventListener('click',()=>{
+  if(quizI<quizOrder.length){const p=scene.pts[quizOrder[quizI]];
+    const d=photo.querySelector(`.dot[data-i="${quizOrder[quizI]}"]`); if(d){d.classList.add('on');setTimeout(()=>d.classList.remove('on'),1200);}
+    document.getElementById('quizFb').textContent=`Вот здесь: ${p[2]} – ${p[3]}`; quizI++; setTimeout(askQ,1300);}
+});
+
+/* ---------- Ripasso: preposizioni articolate ---------- */
+const prepEx=[
+ ['La teiera è','su','sul','tavolino.'],
+ ['I cuscini sono','su','sul','divano.'],
+ ['La statua del Buddha è','in','nella','nicchia.'],
+ ['Le clienti si rilassano','su','sulla','terrazza.'],
+ ['Gli armadietti sono','in','nello','spogliatoio.'],
+ ['Le candele sono','su','sulle','mensole.'],
+ ['I tappetini sono accanto','a','agli','scaffali.'],
+ ['La lampada pende','da','dal','soffitto.'],
+ ['Sento il profumo','di','del','gelsomino.'],
+ ['Le clienti entrano','da','dall\'','ingresso.'],
+ ['L\'amministratrice dà il benvenuto','a','alle','clienti.'],
+ ['Le piante sono','in','nei','vasi.'],
+];
+const prepEl=document.getElementById('exPrep');
+prepEx.forEach((e,i)=>{const r=document.createElement('div');r.className='ex-row';
+  r.innerHTML=`<span>${e[0]}</span><input id="pr${i}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${e[1]} + артикль" style="width:6em"><span class="verb">(${e[1]})</span><span>${e[3]}</span><span class="fb"></span>`;
+  prepEl.appendChild(r);});
+document.getElementById('checkPrep').addEventListener('click',()=>{
+  let ok=0;
+  prepEx.forEach((e,i)=>{const inp=document.getElementById('pr'+i),row=inp.parentElement,fb=row.querySelector('.fb');
+    const v=inp.value.trim().toLowerCase().replace(/[’`]/g,"'");
+    row.classList.remove('ok','no');fb.className='fb';fb.textContent='';
+    if(!v) return;
+    if(v===e[2]){row.classList.add('ok');fb.classList.add('good');fb.textContent='Giusto!';ok++;}
+    else{row.classList.add('no');fb.classList.add('badc');fb.textContent=`Правильно: ${e[2]}`;}
+  });
+  document.getElementById('prepScore').textContent=`${ok} из ${prepEx.length}`;
+});
+
+/* ---------- c'è / ci sono ---------- */
+const ceEx=[
+ ['Nella sala','ci sono','molti tappetini.'],
+ ['Sul tavolino','c\'è','una teiera.'],
+ ['Sulla terrazza','c\'è','un ombrellone.'],
+ ['Sugli scaffali','ci sono','tanti prodotti.'],
+ ['La teiera','è','sul tavolino.'],
+ ['I tappetini','sono','accanto agli scaffali.'],
+ ['Nella sala piccola non','ci sono','finestre.'],
+ ['Tra tre anni nella scuola','ci saranno','tre sale.'],
+ ['Sulla terrazza','ci sarà','una zona per il tè.'],
+ ['Scusi,','c\'è','una lezione di prova questa settimana?'],
+];
+const normCe=v=>v.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g,' ').trim();
+const ceEl=document.getElementById('exCe');
+ceEx.forEach((e,i)=>{const r=document.createElement('div');r.className='ex-row';
+  r.innerHTML=`<span>${e[0]}</span><input id="ce${i}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="c'è, ci sono, è или sono" style="width:7em"><span>${e[2]}</span><span class="fb"></span>`;
+  ceEl.appendChild(r);});
+document.getElementById('checkCe').addEventListener('click',()=>{
+  let ok=0;
+  ceEx.forEach((e,i)=>{const inp=document.getElementById('ce'+i),row=inp.parentElement,fb=row.querySelector('.fb'),v=inp.value;
+    row.classList.remove('ok','no');fb.className='fb';fb.textContent='';
+    if(!v.trim()) return;
+    const exact=v.trim().toLowerCase().replace(/[’`´]/g,"'")===e[1];
+    if(normCe(v)===normCe(e[1])){row.classList.add('ok');fb.classList.add('good');fb.textContent=exact?'Giusto!':`Почти: не забудь ударение – ${e[1]}`;ok++;}
+    else{row.classList.add('no');fb.classList.add('badc');fb.textContent=`Правильно: ${e[1]}`;}
+  });
+  document.getElementById('ceScore').textContent=`${ok} из ${ceEx.length}`;
+});
+loadScene('sala');
+</script>
+
+</body></html>
